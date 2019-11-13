@@ -1,11 +1,11 @@
-import socket
 import pickle
-DECODING = 'utf-8'
-HEADER_SIZE = 20
-CHUNK_SIZE = 64
+from constants import DECODING, HEADER_SIZE, CHUNK_SIZE
 
-def send_str_msg():
-    pass
+
+def send_str_msg(s, msg):
+    msg = pickle.dumps(msg)
+    msg = bytes(f"{len(msg):<{HEADER_SIZE}}", DECODING) + msg
+    s.send(msg)
 
 
 def send_file(s, filepath):
@@ -16,7 +16,7 @@ def send_file(s, filepath):
         s.send(msg)
 
 
-def recv_str_msg(s):
+def recv_msg(s, file_flag):
     full_msg = b''
     new_msg = True
     while new_msg:
@@ -30,11 +30,9 @@ def recv_str_msg(s):
             full_msg += msg
             print(len(full_msg))
             if len(full_msg) - HEADER_SIZE == msglen:
-                print("File received, the content listed below:")
-                print(pickle.loads(full_msg[HEADER_SIZE:]))
+                if file_flag:
+                    print("File received, the content listed below:")
+                else:
+                    print("Full message received")
                 break
-    return full_msg
-
-
-def recv_file():
-    pass
+    return pickle.loads(full_msg[HEADER_SIZE:])

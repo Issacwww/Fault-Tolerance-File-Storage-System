@@ -4,18 +4,24 @@ import shutil
 import psutil
 import json
 import os
+import sys
+sys.path.append(sys.path[0] + "/..")
+from util.constants import DECODING, data_dir, b1_dir, b2_dir, CLIENT_FILE
+from util.fileIO import build_dirs
 
-DECODING = "utf-8"
-data_dir = "./data/"
-b1_dir = "./data1/"
-b2_dir = "./data2/"
-CLIENT_FILE = "client_file.txt"
-if not os.path.exists(data_dir):
-    os.makedirs(data_dir)
-if not os.path.exists(b1_dir):
-    os.makedirs(b1_dir)
-if not os.path.exists(b2_dir):
-    os.makedirs(b2_dir)
+build_dirs()
+
+# DECODING = "utf-8"
+# data_dir = "./data/"
+# b1_dir = "./data1/"
+# b2_dir = "./data2/"
+# CLIENT_FILE = "client_file.txt"
+# if not os.path.exists(data_dir):
+#     os.makedirs(data_dir)
+# if not os.path.exists(b1_dir):
+#     os.makedirs(b1_dir)
+# if not os.path.exists(b2_dir):
+#     os.makedirs(b2_dir)
 
 
 def save_clients_data(client_file):
@@ -30,6 +36,8 @@ def save_clients_copy(dir, client_file):
         f.write(json.dumps(client_file, sort_keys=True, indent=4, separators=(',', ': ')))
     # TODO save files to 3 dir too
 
+
+# receive file from client
 
 def provide_service(connection, client_file):
     command = connection.recv(8192).decode(DECODING).split()
@@ -54,6 +62,10 @@ def provide_service(connection, client_file):
 
     elif order == "r":
         # TODO send back the file context
+        temp_file_list = client_file[uid]
+        if len(file_name) != 1:
+            print("Only allowed to read one file at a time")
+            return
         print("TODO")
 
     elif order == "s":
@@ -64,7 +76,6 @@ def provide_service(connection, client_file):
             result += file + " "
         print(result)
         connection.send(bytes(result, DECODING))
-
 
     # store all data into data folder and backup folder
     save_clients_data(client_file)
