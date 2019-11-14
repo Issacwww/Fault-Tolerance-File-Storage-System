@@ -34,14 +34,11 @@ def save_clients_data(client_file):
 def save_clients_copy(dir, client_file):
     with open(dir + CLIENT_FILE, 'w') as f:
         json.dump(client_file, f, sort_keys=True, indent=4, separators=(',', ': '))
-        # f.write(json.dumps(client_file, sort_keys=True, indent=4, separators=(',', ': ')))
-
+        
 # receive file from client
 def provide_service(connection, client_file):
-    # print("DEBUG: recving msg from client")
     command, command_bytes = recv_msg(connection, False)
-    # print("DEBUG: recved msg from client")
-
+    
     command = command.split()
     uid = command[0]
     order = command[1]
@@ -67,7 +64,6 @@ def provide_service(connection, client_file):
         client_file[uid] = temp_file_list
 
     elif order == "r":
-        # TODO send back the file context
         temp_file_list = client_file[uid]
 
         if len(file_name) > 1:
@@ -77,14 +73,12 @@ def provide_service(connection, client_file):
         else:
             send_str_msg(connection, True)
             send_file(connection, data_dir+"/"+uid,file_name[0])
-        # print("TODO")
+        
 
     elif order == "s":
         if uid not in client_file:
             client_file[uid] = list()
         result = " ".join(client_file[uid])
-        # print(result)
-        # connection.send(bytes(result, DECODING))
         send_str_msg(connection, result)
 
     # store all data into data folder and backup folder

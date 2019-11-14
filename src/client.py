@@ -39,26 +39,20 @@ try:
     D_socket.connect((socket.gethostname(), 4000))
 
     # show connection success
-    # msg = D_socket.recv(CHUNK_SIZE)
-    # print(msg.decode(DECODING))
-
     msg, msg_bytes = recv_msg(D_socket,False)
     print(msg)
 
     # ask for service
-    # D_socket.send(bytes(request, DECODING))
     send_str_msg(D_socket, request)
     S_socket = None
     # receive response (and do '->' action if exist)
     # 1.connect                         D node return a ip address
     if order == "c":
-        # response_c = int(D_socket.recv(CHUNK_SIZE).decode(DECODING))
         response_c,response_bytes = recv_msg(D_socket,False)
         print("your file would be stored with storage node, port:", response_c)
 
     # 2.add files                       D node return a ip address + add in D node-> connect with S node + add in S node
     elif order == "a":
-        # response_a = int(D_socket.recv(CHUNK_SIZE).decode(DECODING))
         response_a,response_bytes = recv_msg(D_socket,False)
         print("now try to connect with storage node, port:", response_a)
         S_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -76,19 +70,12 @@ try:
 
     # 3.read file                       D node return a ip address-> connect with S node + read in S node
     elif order == "r":
-        # response_a = int(D_socket.recv(CHUNK_SIZE).decode(DECODING))
         response_a,response_bytes = recv_msg(D_socket,False)
 
         print("now try to connect with storage node, port:", response_a)
         S_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         S_socket.connect((socket.gethostname(), response_a))
-        # S_socket.send(bytes(request, DECODING))
         send_str_msg(S_socket, request)
-        # TODO after finish the upload, now you can read the file in Sndoe and send the str back,
-        #  you need to
-        #  1.in Snode.py get the file context
-        #  2.recv the str send by Snode
-        #  3.print it here
         found, found_bytes = recv_msg(S_socket, False)
         if found:
             file_content, file_bytes = recv_msg(S_socket, True)
@@ -98,14 +85,10 @@ try:
 
     # 4.1.get file list (storage)       D node return a ip address-> connect with S node + S node return a list
     elif order == "s":
-        # response_gs = int(D_socket.recv(CHUNK_SIZE).decode(DECODING))
         response_gs,response_bytes = recv_msg(D_socket,False)
         print("now try to connect with storage node, port:", response_gs)
         S_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         S_socket.connect((socket.gethostname(), response_gs))
-        # S_socket.send(bytes(request, DECODING))
-        # result_gs = S_socket.recv(CHUNK_SIZE)
-        # print("files:", result_gs.decode(DECODING))
         send_str_msg(S_socket, request)
         result_gs, result_bytes = recv_msg(S_socket,False)
         print("Files:", result_gs)
@@ -113,14 +96,11 @@ try:
 
     # 4.2.get file list (directory)     D node return a list
     elif order == "d":
-        print("testing in gd!!!!")
-        # response_gd = D_socket.recv(CHUNK_SIZE)
-        # print("files:", response_gd.decode(DECODING))
+        # print("testing in gd!!!!")
         response_gd,response_bytes = recv_msg(D_socket,False)
         print("Files:", response_gd)
         
         
 
 except Exception as e:
-    # print(e)
     print("sorry, bad connection, please try again.")

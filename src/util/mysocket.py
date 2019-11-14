@@ -28,7 +28,6 @@ def recv_msg(s,file_flag):
                 new_msg = False
                 print(f"full message length: {msglen}")
             full_msg += msg
-            print("DEBUG:",len(full_msg))
             if len(full_msg) - HEADER_SIZE >= msglen:
                 if file_flag:
                     print("File received!")
