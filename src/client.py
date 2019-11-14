@@ -60,11 +60,8 @@ try:
         S_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         S_socket.connect((SERVER_IP, response_a)) 
 
-        print(f"DEBUG: requests {request}")
-        send_str_msg(S_socket, request)
-        print("DEBUG: add requests sended")
+        send_str_msg(S_socket, request)        
         # send the content of files using pickle
-
         for file in file_name:
             # TODO add metrics
             send_file(S_socket, client_dir, file)

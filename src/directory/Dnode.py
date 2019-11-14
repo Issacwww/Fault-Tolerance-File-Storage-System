@@ -10,6 +10,7 @@ sys.path.append(sys.path[0] + "/..")
 from util.constants import *
 from util.fileIO import build_dirs
 from util.mysocket import *
+from util.metrics import Metrics
 
 def save_clients_data(client_storage, client_file):
     # store all data into data folder and backup folder

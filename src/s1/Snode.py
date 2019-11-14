@@ -9,9 +9,11 @@ sys.path.append(sys.path[0] + "/..")
 from util.mysocket import *
 from util.constants import DECODING, data_dir, b1_dir, b2_dir, CLIENT_FILE
 from util.fileIO import build_dirs
+from util.metrics import Metrics
 
 build_dirs()
-
+if not os.path.exists("metrics"):
+    os.makedirs("metrics")
 # TODO save files to 3 dir 
 def store_file(uid, file):
     store_file_copy(data_dir+'/'+uid,file)

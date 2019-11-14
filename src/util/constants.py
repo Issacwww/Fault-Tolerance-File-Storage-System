@@ -8,3 +8,8 @@ s_address = [5000]
 CLIENT_STORAGE = "client_storage.txt"
 CLIENT_FILE = "client_file.txt"
 REMOTE_ADDRESS = "18.216.117.228"
+
+# metrics name
+REQUEST_NUM = "sentRequestNum"
+LATENCY = "Latency"
+DATA_TRANSFER = "DataTransferBytes"

@@ -39,18 +39,3 @@ def recv_msg(s,file_flag):
         else:
             print("Full message received!")
     return pickle.loads(b''.join(full_msg)), msglen+HEADER_SIZE
-    # while new_msg:
-    #     while True:
-    #         msg = s.recv(CHUNK_SIZE)
-    #         if new_msg:
-    #             msglen = int(msg[:HEADER_SIZE])
-    #             new_msg = False
-    #             print(f"full message length: {msglen}")
-    #         full_msg += msg
-    #         if len(full_msg) - HEADER_SIZE >= msglen:
-    #             if file_flag:
-    #                 print("File received!")
-    #             else:
-    #                 print("Full message received")
-    #             break
-    # return pickle.loads(full_msg[HEADER_SIZE:]), len(full_msg)
