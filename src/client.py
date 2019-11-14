@@ -4,8 +4,10 @@ import os
 import random
 import pickle
 from util.mysocket import *
-from util.constants import CHUNK_SIZE, HEADER_SIZE,DECODING
+from util.constants import CHUNK_SIZE, HEADER_SIZE,DECODING, REMOTE_ADDRESS
 # from util.metrics import Metrics
+# SERVER_IP = '127.0.0.1'
+SERVER_IP = REMOTE_ADDRESS 
 
 # generate random file for client
 def create_random_files(dir, id):
@@ -36,7 +38,7 @@ print(f"request: {request}")
 # ask service provider
 try:
     D_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    D_socket.connect((socket.gethostname(), 4000))
+    D_socket.connect((SERVER_IP, 4000))
 
     # show connection success
     msg, msg_bytes = recv_msg(D_socket,False)
@@ -56,7 +58,7 @@ try:
         response_a,response_bytes = recv_msg(D_socket,False)
         print("now try to connect with storage node, port:", response_a)
         S_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        S_socket.connect((socket.gethostname(), response_a)) 
+        S_socket.connect((SERVER_IP, response_a)) 
 
         print(f"DEBUG: requests {request}")
         send_str_msg(S_socket, request)
@@ -75,7 +77,7 @@ try:
 
         print("now try to connect with storage node, port:", response_a)
         S_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        S_socket.connect((socket.gethostname(), response_a))
+        S_socket.connect((SERVER_IP, response_a))
         send_str_msg(S_socket, request)
         found, found_bytes = recv_msg(S_socket, False)
         if found:
@@ -89,7 +91,7 @@ try:
         response_gs,response_bytes = recv_msg(D_socket,False)
         print("now try to connect with storage node, port:", response_gs)
         S_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        S_socket.connect((socket.gethostname(), response_gs))
+        S_socket.connect((SERVER_IP, response_gs))
         send_str_msg(S_socket, request)
         result_gs, result_bytes = recv_msg(S_socket,False)
         print("Files:", result_gs)

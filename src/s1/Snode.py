@@ -59,7 +59,7 @@ def provide_service(connection, client_file):
             # TODO download file to data folder and backup folder
             f, f_bytes = recv_msg(connection, True)
             store_file(uid,f)
-            print(f"file {file} uploaded")
+            print(f"file {file} uploaded to Snode")
 
         client_file[uid] = temp_file_list
 
