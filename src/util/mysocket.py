@@ -18,20 +18,39 @@ def send_file(s, dir, filename):
     # return len(msg)
 
 def recv_msg(s,file_flag):
-    full_msg = b''
+    full_msg = []
+    msglen,recvlen = 0, 0
     new_msg = True
     while new_msg:
-        while True:
-            msg = s.recv(CHUNK_SIZE)
-            if new_msg:
-                msglen = int(msg[:HEADER_SIZE])
-                new_msg = False
-                print(f"full message length: {msglen}")
-            full_msg += msg
-            if len(full_msg) - HEADER_SIZE >= msglen:
-                if file_flag:
-                    print("File received!")
-                else:
-                    print("Full message received")
-                break
-    return pickle.loads(full_msg[HEADER_SIZE:]), len(full_msg)
+        if msglen == 0:
+            header = s.recv(HEADER_SIZE)
+            msglen = int(header)
+            new_msg = False
+            print(f"full message length: {msglen}")
+        while recvlen < msglen:
+            chuck = s.recv(min(msglen - recvlen, CHUNK_SIZE))
+            if chuck == b'':
+                raise RuntimeError("socket connection broken")
+            full_msg.append(chuck)
+            recvlen += len(chuck)
+        
+        if file_flag:
+            print("File received!")
+        else:
+            print("Full message received!")
+    return pickle.loads(b''.join(full_msg)), msglen+HEADER_SIZE
+    # while new_msg:
+    #     while True:
+    #         msg = s.recv(CHUNK_SIZE)
+    #         if new_msg:
+    #             msglen = int(msg[:HEADER_SIZE])
+    #             new_msg = False
+    #             print(f"full message length: {msglen}")
+    #         full_msg += msg
+    #         if len(full_msg) - HEADER_SIZE >= msglen:
+    #             if file_flag:
+    #                 print("File received!")
+    #             else:
+    #                 print("Full message received")
+    #             break
+    # return pickle.loads(full_msg[HEADER_SIZE:]), len(full_msg)

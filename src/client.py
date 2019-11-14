@@ -62,6 +62,7 @@ try:
         send_str_msg(S_socket, request)
         print("DEBUG: add requests sended")
         # send the content of files using pickle
+
         for file in file_name:
             # TODO add metrics
             send_file(S_socket, client_dir, file)
@@ -99,7 +100,8 @@ try:
         # print("testing in gd!!!!")
         response_gd,response_bytes = recv_msg(D_socket,False)
         print("Files:", response_gd)
-        
+    # S_socket.close()
+    # D_socket.close()
         
 
 except Exception as e:

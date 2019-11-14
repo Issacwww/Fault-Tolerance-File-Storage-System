@@ -51,15 +51,15 @@ def provide_service(connection, client_file):
         temp_file_list = client_file[uid]
         for file in file_name:
             if file not in temp_file_list:
-                print(f"file {file} is added to Snode")
-                f, f_bytes = recv_msg(connection, True)
-                assert f[0] == file
+                print(f"file {file} will be added to Snode")
                 temp_file_list.append(file)
-                store_file(uid,f)
             else:
-                print(f"file {file} already exist")
+                print(f"file {file} already exist, update it")
 
             # TODO download file to data folder and backup folder
+            f, f_bytes = recv_msg(connection, True)
+            store_file(uid,f)
+            print(f"file {file} uploaded")
 
         client_file[uid] = temp_file_list
 
