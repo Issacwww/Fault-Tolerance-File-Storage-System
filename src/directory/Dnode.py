@@ -5,23 +5,11 @@ import psutil
 import random
 import json
 import os
-
-DECODING = "utf-8"
-data_dir = "./data/"
-b1_dir = "./data1/"
-b2_dir = "./data2/"
-s_address = [5000]
-CLIENT_STORAGE = "client_storage.txt"
-CLIENT_FILE = "client_file.txt"
-
-def build_dirs():
-    if not os.path.exists(data_dir):
-        os.makedirs(data_dir)
-    if not os.path.exists(b1_dir):
-        os.makedirs(b1_dir)
-    if not os.path.exists(b2_dir):
-        os.makedirs(b2_dir)
-
+import sys
+sys.path.append(sys.path[0] + "/..")
+from util.constants import *
+from util.fileIO import build_dirs
+from util.mysocket import *
 
 def save_clients_data(client_storage, client_file):
     # store all data into data folder and backup folder
@@ -38,7 +26,8 @@ def save_clients_copy(dir, client_storage, client_file):
 
 
 def provide_service(connection, client_storage, client_file):
-    command = connection.recv(8192).decode(DECODING).split()
+    command, command_bytes = recv_msg(connection, False)
+    command = command.split()
     print(command)
     uid = command[0]
     order = command[1]
@@ -49,7 +38,8 @@ def provide_service(connection, client_storage, client_file):
         if uid not in client_storage:
             client_storage[uid] = random.choice(s_address)
             client_file[uid] = list()
-        connection.send(bytes(str(client_storage[uid]), DECODING))
+        send_str_msg(connection,client_storage[uid])
+        # connection.send(bytes(str(client_storage[uid]), DECODING))
 
     elif order == "a":
         if uid not in client_storage:
@@ -65,17 +55,16 @@ def provide_service(connection, client_storage, client_file):
             else:
                 print(f"file {file} already exist")
         client_file[uid] = temp_file_list
-        connection.send(bytes(str(client_storage[uid]), DECODING))
+        send_str_msg(connection,client_storage[uid])
+        # connection.send(bytes(str(client_storage[uid]), DECODING))
 
     elif order == "d":
         print("inside gd Dnode")
         if uid not in client_file:
             client_file[uid] = list()
-        result = ""
-        for file in client_file[uid]:
-            result += file + " "
+        result = " ".join(client_file[uid])
         print(result)
-        connection.send(bytes(result, DECODING))
+        send_str_msg(connection,result)
 
     # store all data into data folder and backup folder
     save_clients_data(client_storage, client_file)
@@ -102,7 +91,7 @@ def testing():
         # connect with client
         client_connection, address = s.accept()
         print(f"connection from {address} has been established.")
-        client_connection.send(bytes("welcome to the server.", DECODING))
+        send_str_msg(client_connection,"welcome to the server.")
         service = threading.Thread(target=provide_service, args=(client_connection, client_storage, client_file))
         service.setDaemon(True)
         service.start()

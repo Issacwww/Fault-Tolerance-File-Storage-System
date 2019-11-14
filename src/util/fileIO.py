@@ -1,5 +1,5 @@
 import os
-from constants import *
+from .constants import *
 
 
 def build_dirs():

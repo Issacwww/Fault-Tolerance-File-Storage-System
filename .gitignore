@@ -124,5 +124,8 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
-/src/clients
-*/data*/
+clients/
+data/
+data1/
+data2/
+

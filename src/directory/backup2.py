@@ -1,20 +1,10 @@
 import subprocess
 import shutil
 import os
-
-data_dir = "./data/"
-b1_dir = "./data1/"
-b2_dir = "./data2/"
-
-
-def build_dirs():
-    if not os.path.exists(data_dir):
-        os.makedirs(data_dir)
-    if not os.path.exists(b1_dir):
-        os.makedirs(b1_dir)
-    if not os.path.exists(b2_dir):
-        os.makedirs(b2_dir)
-
+import sys
+sys.path.append(sys.path[0] + "/..")
+from util.constants import data_dir, b1_dir, b2_dir
+from util.fileIO import build_dirs
 
 build_dirs()
 filename = 'backup1.py'

@@ -6,23 +6,23 @@ import json
 import os
 import sys
 sys.path.append(sys.path[0] + "/..")
+from util.mysocket import *
 from util.constants import DECODING, data_dir, b1_dir, b2_dir, CLIENT_FILE
 from util.fileIO import build_dirs
 
 build_dirs()
 
-# DECODING = "utf-8"
-# data_dir = "./data/"
-# b1_dir = "./data1/"
-# b2_dir = "./data2/"
-# CLIENT_FILE = "client_file.txt"
-# if not os.path.exists(data_dir):
-#     os.makedirs(data_dir)
-# if not os.path.exists(b1_dir):
-#     os.makedirs(b1_dir)
-# if not os.path.exists(b2_dir):
-#     os.makedirs(b2_dir)
+# TODO save files to 3 dir 
+def store_file(uid, file):
+    store_file_copy(data_dir+'/'+uid,file)
+    store_file_copy(b1_dir+'/'+uid,file)
+    store_file_copy(b2_dir+'/'+uid,file)
 
+def store_file_copy(dir, file):
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+    with open(dir+'/'+file[0],'w') as w:
+        w.write(file[1])
 
 def save_clients_data(client_file):
     # store all data into data folder and backup folder
@@ -33,19 +33,21 @@ def save_clients_data(client_file):
 
 def save_clients_copy(dir, client_file):
     with open(dir + CLIENT_FILE, 'w') as f:
-        f.write(json.dumps(client_file, sort_keys=True, indent=4, separators=(',', ': ')))
-    # TODO save files to 3 dir too
-
+        json.dump(client_file, f, sort_keys=True, indent=4, separators=(',', ': '))
+        # f.write(json.dumps(client_file, sort_keys=True, indent=4, separators=(',', ': ')))
 
 # receive file from client
-
 def provide_service(connection, client_file):
-    command = connection.recv(8192).decode(DECODING).split()
+    # print("DEBUG: recving msg from client")
+    command, command_bytes = recv_msg(connection, False)
+    # print("DEBUG: recved msg from client")
+
+    command = command.split()
     uid = command[0]
     order = command[1]
     if len(command) > 2:
         file_name = command[2:]
-
+    print(f"msg from client {uid} with command {command}")
     if order == "a":
         if uid not in client_file:
             client_file[uid] = list()
@@ -53,29 +55,37 @@ def provide_service(connection, client_file):
         for file in file_name:
             if file not in temp_file_list:
                 print(f"file {file} is added to Snode")
+                f, f_bytes = recv_msg(connection, True)
+                assert f[0] == file
                 temp_file_list.append(file)
+                store_file(uid,f)
             else:
                 print(f"file {file} already exist")
 
             # TODO download file to data folder and backup folder
+
         client_file[uid] = temp_file_list
 
     elif order == "r":
         # TODO send back the file context
         temp_file_list = client_file[uid]
-        if len(file_name) != 1:
-            print("Only allowed to read one file at a time")
-            return
-        print("TODO")
+
+        if len(file_name) > 1:
+            print("Only allowed to read one file at a time, return the first required file")
+        if file_name[0] not in temp_file_list:
+            send_str_msg(connection, False)
+        else:
+            send_str_msg(connection, True)
+            send_file(connection, data_dir+"/"+uid,file_name[0])
+        # print("TODO")
 
     elif order == "s":
         if uid not in client_file:
             client_file[uid] = list()
-        result = ""
-        for file in client_file[uid]:
-            result += file + " "
-        print(result)
-        connection.send(bytes(result, DECODING))
+        result = " ".join(client_file[uid])
+        # print(result)
+        # connection.send(bytes(result, DECODING))
+        send_str_msg(connection, result)
 
     # store all data into data folder and backup folder
     save_clients_data(client_file)
