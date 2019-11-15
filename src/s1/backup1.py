@@ -84,20 +84,20 @@ def protect():
 
 
 if __name__ == '__main__':
-    # while True:
-    #     pid = int(get_pid())
-    #     if pid:
-    #         running_pids = psutil.pids()
-    #         if pid in running_pids:
-    #             pass
-    #         else:
-    #             save_pid()
-    #             print("starting backup1, pid: ", get_pid())
-    #             protect()
-    #     else:
-    #         save_pid()
-    #         print("starting backup1, pid: ", get_pid())
-    #         protect()
-    pid = os.getpid()
-    print("starting backup1, pid: ", pid)
-    protection()
+    while True:
+        pid = int(get_pid())
+        if pid:
+            running_pids = psutil.pids()
+            if pid in running_pids:
+                pass
+            else:
+                save_pid()
+                print("starting backup1, pid: ", get_pid())
+                protect()
+        else:
+            save_pid()
+            print("starting backup1, pid: ", get_pid())
+            protect()
+    # pid = os.getpid()
+    # print("starting backup1, pid: ", pid)
+    # protection()

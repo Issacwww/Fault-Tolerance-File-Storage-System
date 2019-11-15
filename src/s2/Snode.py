@@ -151,18 +151,17 @@ def get_pid():
 if __name__ == '__main__':
     while True:
         pid = int(get_pid())
-        
         if pid:
             running_pids = psutil.pids()
             if pid in running_pids:
                 pass
             else:
                 save_pid()
-                print("starting Dnode, pid: ", get_pid())
+                print("starting Dnode, pid: ", os.getpid())
                 metrics = Metrics(os.getpid())
                 testing(metrics)
         else:
             save_pid()
-            print("starting Dnode, pid: ", get_pid())
+            print("starting Dnode, pid: ", os.getpid())
             metrics = Metrics(os.getpid())
             testing(metrics)
