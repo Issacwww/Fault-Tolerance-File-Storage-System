@@ -133,7 +133,7 @@ def save_pid():
 
 def save_pids(data_path):
     pid = os.getpid()
-    file = data_path + "pid.txt"
+    file = data_path + "pid1.txt"
     with open(file, 'w') as f:
         f.write(str(pid))
 
@@ -159,10 +159,10 @@ if __name__ == '__main__':
             else:
                 save_pid()
                 print("starting Dnode, pid: ", get_pid())
-                metrics = Metrics(get_pid())
+                metrics = Metrics(os.getpid())
                 testing(metrics)
         else:
             save_pid()
             print("starting Dnode, pid: ", get_pid())
-            metrics = Metrics(get_pid())
+            metrics = Metrics(os.getpid())
             testing(metrics)

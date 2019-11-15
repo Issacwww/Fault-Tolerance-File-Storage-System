@@ -133,7 +133,7 @@ def save_pid():
 
 def save_pids(data_path):
     pid = os.getpid()
-    file = data_path + "pid.txt"
+    file = data_path + "pid1.txt"
     with open(file, 'w') as f:
         f.write(str(pid))
 
@@ -149,20 +149,25 @@ def get_pid():
 
 
 if __name__ == '__main__':
-    while True:
-        pid = int(get_pid())
+    # while True:
+    #     pid = int(get_pid())
         
-        if pid:
-            running_pids = psutil.pids()
-            if pid in running_pids:
-                pass
-            else:
-                save_pid()
-                print("starting Dnode, pid: ", get_pid())
-                metrics = Metrics(get_pid())
-                testing(metrics)
-        else:
-            save_pid()
-            print("starting Dnode, pid: ", get_pid())
-            metrics = Metrics(get_pid())
-            testing(metrics)
+    #     if pid:
+    #         running_pids = psutil.pids()
+    #         if pid in running_pids:
+    #             pass
+    #         else:
+    #             save_pid()
+    #             print("starting Dnode, pid: ", get_pid())
+    #             metrics = Metrics(os.getpid())
+    #             testing(metrics)
+    #     else:
+    #         save_pid()
+    #         print("starting Dnode, pid: ", get_pid())
+    #         metrics = Metrics(os.getpid())
+    #         testing(metrics)
+
+    pid = os.getpid()
+    print("starting Dnode, pid: ",pid)
+    metrics = Metrics(pid)
+    testing(metrics)
