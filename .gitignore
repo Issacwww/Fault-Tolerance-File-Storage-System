@@ -129,5 +129,5 @@ data/
 data1/
 data2/
 metrics/
-
+testres/
 test.py
