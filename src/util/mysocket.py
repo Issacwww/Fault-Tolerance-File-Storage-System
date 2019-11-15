@@ -6,7 +6,7 @@ def send_str_msg(s, msg):
     msg = pickle.dumps(msg)
     msg = bytes(f"{len(msg):<{HEADER_SIZE}}", DECODING) + msg
     s.send(msg)
-    # return len(msg)
+    return len(msg)
 
 def send_file(s, dir, filename):
     path = f"{dir}/{filename}"
@@ -14,8 +14,7 @@ def send_file(s, dir, filename):
         msg = pickle.dumps((filename,f.read()))
         msg = bytes(f"{len(msg):<{HEADER_SIZE}}", DECODING) + msg
         s.send(msg)
-    
-    # return len(msg)
+    return len(msg)
 
 def recv_msg(s,file_flag):
     full_msg = []

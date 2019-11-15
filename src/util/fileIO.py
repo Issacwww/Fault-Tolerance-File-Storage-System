@@ -8,4 +8,6 @@ def build_dirs():
         os.makedirs(b1_dir)
     if not os.path.exists(b2_dir):
         os.makedirs(b2_dir)
+    if not os.path.exists(metrics_dir):
+        os.makedirs(metrics_dir)
     

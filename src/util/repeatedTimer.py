@@ -1,19 +1,19 @@
 from threading import Timer
 
 class RepeatedTimer(object):
-    def __init__(self, interval, function, *args, **kwargs):
+    def __init__(self, interval, function):
         self._timer     = None
         self.function   = function
         self.interval   = interval
-        self.args       = args
-        self.kwargs     = kwargs
+        # self.args       = args
+        # self.kwargs     = kwargs
         self.is_running = False
         self.start()
 
     def _run(self):
         self.is_running = False
         self.start()
-        self.function(*self.args, **self.kwargs)
+        self.function()
 
     def start(self):
         if not self.is_running:

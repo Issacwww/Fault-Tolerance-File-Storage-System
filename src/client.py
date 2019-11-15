@@ -4,10 +4,10 @@ import os
 import random
 import pickle
 from util.mysocket import *
-from util.constants import CHUNK_SIZE, HEADER_SIZE,DECODING, REMOTE_ADDRESS
+from util.constants import CHUNK_SIZE, HEADER_SIZE,DECODING, REMOTE_ADDRESS, LOCAL_ADDRESS
 # from util.metrics import Metrics
-# SERVER_IP = '127.0.0.1'
-SERVER_IP = REMOTE_ADDRESS 
+SERVER_IP = LOCAL_ADDRESS
+# SERVER_IP = REMOTE_ADDRESS 
 
 # generate random file for client
 def create_random_files(dir, id):
@@ -38,9 +38,11 @@ print(f"request: {request}")
 # ask service provider
 try:
     D_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print("DEBUG: try to connect")
     D_socket.connect((SERVER_IP, 4000))
 
     # show connection success
+    print("DEBUG: send request")
     msg, msg_bytes = recv_msg(D_socket,False)
     print(msg)
 

@@ -106,7 +106,7 @@ def init_dicts(dict_name):
 def testing(metrics):
     client_file = init_dicts(CLIENT_FILE)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # ipv4, tcp
-    s.bind((socket.gethostname(), 5000))  # host, port
+    s.bind((socket.gethostname(), 5001))  # host, port
     s.listen(5000)
     # accept multi requests
     while True:

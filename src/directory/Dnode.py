@@ -5,6 +5,7 @@ import psutil
 import random
 import json
 import os
+import time
 import sys
 sys.path.append(sys.path[0] + "/..")
 from util.constants import *
@@ -26,7 +27,7 @@ def save_clients_copy(dir, client_storage, client_file):
         f.write(json.dumps(client_file, sort_keys=True, indent=4, separators=(',', ': ')))
 
 
-def provide_service(connection, client_storage, client_file):
+def provide_service(connection, client_storage, client_file, metrics):
     command, command_bytes = recv_msg(connection, False)
     command = command.split()
     print(command)
@@ -34,14 +35,16 @@ def provide_service(connection, client_storage, client_file):
     order = command[1]
     if len(command) > 2:
         file_name = command[2:]
-
+    metrics.addOne(REQUEST_NUM)
+    metrics.addValue(DATA_TRANSFER, command_bytes)
+    start = time.time()
+    msg_bytes = 0
     if order == "c" or order == "s" or order == "r":
         if uid not in client_storage:
             client_storage[uid] = random.choice(s_address)
             client_file[uid] = list()
-        send_str_msg(connection,client_storage[uid])
-        # connection.send(bytes(str(client_storage[uid]), DECODING))
-
+        msg_bytes += send_str_msg(connection,client_storage[uid])
+        
     elif order == "a":
         if uid not in client_storage:
             client_storage[uid] = random.choice(s_address)
@@ -56,8 +59,8 @@ def provide_service(connection, client_storage, client_file):
             else:
                 print(f"file {file} already exist")
         client_file[uid] = temp_file_list
-        send_str_msg(connection,client_storage[uid])
-        # connection.send(bytes(str(client_storage[uid]), DECODING))
+        msg_bytes += send_str_msg(connection,client_storage[uid])
+        
 
     elif order == "d":
         print("inside gd Dnode")
@@ -65,8 +68,12 @@ def provide_service(connection, client_storage, client_file):
             client_file[uid] = list()
         result = " ".join(client_file[uid])
         print(result)
-        send_str_msg(connection,result)
-
+        msg_bytes += send_str_msg(connection,result)
+    
+    end = time.time()
+    metrics.addValue(DATA_TRANSFER, msg_bytes)
+    metrics.addValue(LATENCY, end - start)
+    metrics.emit()
     # store all data into data folder and backup folder
     save_clients_data(client_storage, client_file)
 
@@ -79,7 +86,7 @@ def init_dicts(dict_name):
         return dict()
 
 
-def testing():
+def testing(metrics):
     build_dirs()
     client_storage = init_dicts(CLIENT_STORAGE)  # which storage node(s) responsible for this client
     client_file = init_dicts(CLIENT_FILE)  # what file they have
@@ -92,8 +99,9 @@ def testing():
         # connect with client
         client_connection, address = s.accept()
         print(f"connection from {address} has been established.")
-        send_str_msg(client_connection,"welcome to the server.")
-        service = threading.Thread(target=provide_service, args=(client_connection, client_storage, client_file))
+        msg_bytes = send_str_msg(client_connection,"welcome to the server.")
+        metrics.addValue(DATA_TRANSFER,msg_bytes)
+        service = threading.Thread(target=provide_service, args=(client_connection, client_storage, client_file, metrics))
         service.setDaemon(True)
         service.start()
 
@@ -114,9 +122,10 @@ def save_pid():
 
 def save_pids(data_path):
     pid = os.getpid()
-    file = data_path + "pid1.txt"
+    file = data_path + "pid.txt"
     with open(file, 'w') as f:
         f.write(str(pid))
+    return pid
 
 
 def get_pid():
@@ -140,8 +149,10 @@ if __name__ == '__main__':
             else:
                 save_pid()
                 print("starting Dnode")
-                testing()
+                metrics = Metrics(get_pid())
+                testing(metrics)
         else:
             save_pid()
             print("starting Dnode")
-            testing()
+            metrics = Metrics(get_pid())
+            testing(metrics)
