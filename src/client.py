@@ -16,7 +16,7 @@ def create_random_files(dir, id):
         for i in range(random.randint(10, 20)):
             with open(dir + "/" + str(i), 'w') as f:
                 s = ""
-                for j in range(random.randint(0, 100)):
+                for j in range(random.randint(1, 50)):
                     s += str(id) + " generated random sentence " + str(j + 1) + "\n"
                 f.write(s)
 

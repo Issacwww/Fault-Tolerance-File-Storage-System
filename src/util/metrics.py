@@ -1,5 +1,4 @@
 from .constants import REQUEST_NUM, LATENCY, DATA_TRANSFER
-from .repeatedTimer import RepeatedTimer
 from datetime import datetime
 from time import sleep
 import threading
