@@ -98,11 +98,8 @@ try:
 
     # 4.2.get file list (directory)     D node return a list
     elif order == "d":
-        # print("testing in gd!!!!")
         response_gd,response_bytes = recv_msg(D_socket,False)
         print("Files:", response_gd)
-    # S_socket.close()
-    # D_socket.close()
         
 
 except Exception as e:

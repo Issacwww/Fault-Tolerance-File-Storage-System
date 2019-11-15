@@ -13,18 +13,20 @@ from util.fileIO import build_dirs
 from util.metrics import Metrics
 
 build_dirs()
-# TODO save files to 3 dir 
+# save files to 3 dir 
 def store_file(uid, file):
     store_file_copy(data_dir+'/'+uid,file)
     store_file_copy(b1_dir+'/'+uid,file)
     store_file_copy(b2_dir+'/'+uid,file)
 
+# store uploaded file
 def store_file_copy(dir, file):
     if not os.path.exists(dir):
         os.makedirs(dir)
     with open(dir+'/'+file[0],'w') as w:
         w.write(file[1])
 
+# always backup client data to all nodes
 def save_clients_data(client_file):
     # store all data into data folder and backup folder
     save_clients_copy(data_dir, client_file)
@@ -102,7 +104,7 @@ def init_dicts(dict_name):
     else:
         return dict()
 
-
+# provide service
 def testing(metrics):
     client_file = init_dicts(CLIENT_FILE)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # ipv4, tcp
@@ -117,6 +119,8 @@ def testing(metrics):
         service.start()
 
 
+#  copy all data from backup into new location for the new working node, 
+#  so the working node would have the pid info and all client data it needs to recover from the failure.
 def copy_files(source_dir, target_ir):
     for file in os.listdir(source_dir):
         source_file = os.path.join(source_dir, file)
@@ -124,7 +128,7 @@ def copy_files(source_dir, target_ir):
         if os.path.isfile(source_file):
             shutil.copy(source_file, target_ir)
 
-
+# save pid to all nodes, in case one/two node(s) failed
 def save_pid():
     save_pids(data_dir)
     save_pids(b1_dir)
@@ -152,6 +156,7 @@ if __name__ == '__main__':
     while True:
         pid = int(get_pid())
         
+        # check if this program already running
         if pid:
             running_pids = psutil.pids()
             if pid in running_pids:
@@ -159,12 +164,16 @@ if __name__ == '__main__':
             else:
                 save_pid()
                 print("starting Dnode, pid: ", os.getpid())
+                # build metric
                 metrics = Metrics(os.getpid())
+                # start server
                 testing(metrics)
         else:
             save_pid()
             print("starting Dnode, pid: ", os.getpid())
+            # build metric
             metrics = Metrics(os.getpid())
+            # start server
             testing(metrics)
 
     # pid = os.getpid()

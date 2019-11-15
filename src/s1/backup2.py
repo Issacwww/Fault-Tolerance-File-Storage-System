@@ -9,7 +9,7 @@ from util.fileIO import build_dirs
 build_dirs()
 filename = 'backup1.py'
 
-
+# provide the client data to the new node
 def copy_files(source_dir, target_ir):
     for file in os.listdir(source_dir):
         source_file = os.path.join(source_dir, file)
@@ -18,6 +18,8 @@ def copy_files(source_dir, target_ir):
             shutil.copy(source_file, target_ir)
 
 
+# protect the working node, if the working node failed, it would
+# automatically recover the node 
 def protect():
     while True:
         build_dirs()
