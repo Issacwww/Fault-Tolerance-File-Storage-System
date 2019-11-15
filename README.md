@@ -6,7 +6,7 @@ This project is a prototype for Simple Fault Tolerance File Storage System, impl
 
 The system has two main components: Directory server and Storage node, for the fault tolerance, some backup nodes are created to protect the Main node to provide service. 
 
-![image-20191115161030422](/Users/ssuchao/Library/Application Support/typora-user-images/image-20191115161030422.png)
+![image-20191115161030422](./pics/arch.png)
 
 ### Usage
 
@@ -32,4 +32,5 @@ At third terminal, running this command , the arguments of actions are listed
 
 `test.sh` is used to test the performance of the system, after bootstrapping the directory server and storage nodes, you could run it test.
 
-List one of my test result belo (100 clients with killing process of storage node 2 and recovery )![metrics](/Users/ssuchao/Code/Python/FTFS/testres/50client-2-with-kill/metrics.jpg)
+List one of my test result belo (100 clients with killing process of storage node 2 and recovery )![metrics](./pics/metrics.jpg)
+
