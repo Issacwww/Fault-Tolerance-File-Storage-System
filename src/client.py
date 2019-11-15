@@ -6,8 +6,8 @@ import pickle
 from util.mysocket import *
 from util.constants import CHUNK_SIZE, HEADER_SIZE,DECODING, REMOTE_ADDRESS, LOCAL_ADDRESS
 # from util.metrics import Metrics
-SERVER_IP = LOCAL_ADDRESS
-# SERVER_IP = REMOTE_ADDRESS 
+# SERVER_IP = LOCAL_ADDRESS
+SERVER_IP = REMOTE_ADDRESS 
 
 # generate random file for client
 def create_random_files(dir, id):

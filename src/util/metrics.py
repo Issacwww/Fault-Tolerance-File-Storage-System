@@ -27,7 +27,7 @@ class Metrics:
         while True:
             self.emit()
             try:
-                sleep(1)
+                sleep(5)
             except:
                 pass
 
