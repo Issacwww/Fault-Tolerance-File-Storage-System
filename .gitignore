@@ -131,3 +131,4 @@ data2/
 metrics/
 testres/
 test.py
+*.zip
